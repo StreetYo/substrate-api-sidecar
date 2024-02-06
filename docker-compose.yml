@@ -11,7 +11,7 @@ services:
 
   sidecar:
     # build: .
-    image: docker.io/parity/substrate-api-sidecar:latest
+    image: docker.io/gasanovnariman/substrate-api-sidecar:latest
     read_only: true
     ports:
       - "8080:8080"
