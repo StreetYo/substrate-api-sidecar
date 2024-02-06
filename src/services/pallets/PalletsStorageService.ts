@@ -24,7 +24,6 @@ import {sanitizeNumbers} from '../../sanitize/sanitizeNumbers';
 import {AbstractPalletsService} from '../AbstractPalletsService';
 import {AnyTuple} from "@polkadot/types-codec/types";
 import {Codec} from "@polkadot/types/types";
-import {AnyJson} from "../../types/polkadot-js/AnyJson";
 
 interface IFetchPalletArgs {
 	hash: BlockHash;
