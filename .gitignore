@@ -13,6 +13,7 @@ yarn-error.log
 /.clinic
 **.log
 **/logs
+package-lock.json
 
 # Yarn berry
 .yarn/*
