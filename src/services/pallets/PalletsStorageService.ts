@@ -14,14 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { ApiDecoration } from '@polkadot/api/types';
-import { Text } from '@polkadot/types';
-import { BlockHash, StorageEntryMetadataV14 } from '@polkadot/types/interfaces';
-import { stringCamelCase } from '@polkadot/util';
-import { IPalletStorage, IPalletStorageItem, ISanitizedStorageItemMetadata } from 'src/types/responses';
+import {ApiDecoration} from '@polkadot/api/types';
+import {Text} from '@polkadot/types';
+import {BlockHash, StorageEntryMetadataV14} from '@polkadot/types/interfaces';
+import {stringCamelCase} from '@polkadot/util';
+import {IPalletStorage, IPalletStorageItem, ISanitizedStorageItemMetadata} from 'src/types/responses';
 
-import { sanitizeNumbers } from '../../sanitize/sanitizeNumbers';
-import { AbstractPalletsService } from '../AbstractPalletsService';
+import {sanitizeNumbers} from '../../sanitize/sanitizeNumbers';
+import {AbstractPalletsService} from '../AbstractPalletsService';
+import {AnyTuple} from "@polkadot/types-codec/types";
+import {Codec} from "@polkadot/types/types";
+import {AnyJson} from "../../types/polkadot-js/AnyJson";
 
 interface IFetchPalletArgs {
 	hash: BlockHash;
@@ -58,10 +61,27 @@ export class PalletsStorageService extends AbstractPalletsService {
 			normalizedStorageItemMeta = this.normalizeStorageItemMeta(storageItemMeta);
 		}
 
-		const [value, { number }] = await Promise.all([
-			historicApi.query[palletName][storageItemId](...keys),
-			this.api.rpc.chain.getHeader(hash),
-		]);
+		let value, number;
+
+		if (keys.length === 0) {
+			let entries;
+
+			[entries, { number }] = await Promise.all([
+				historicApi.query[palletName][storageItemId].entries<Codec, AnyTuple>(),
+				this.api.rpc.chain.getHeader(hash),
+			]);
+
+			value = Object.fromEntries(
+				entries.map(([key, entry]) => {
+					return [key.toHuman(), entry];
+				})
+			);
+		} else {
+			[value, { number }] = await Promise.all([
+				historicApi.query[palletName][storageItemId](...keys),
+				this.api.rpc.chain.getHeader(hash),
+			]);
+		}
 
 		return {
 			at: {

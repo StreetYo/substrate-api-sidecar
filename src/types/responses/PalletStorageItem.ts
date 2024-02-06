@@ -16,10 +16,11 @@
 
 import { Codec } from '../polkadot-js';
 import { IPallet, ISanitizedStorageItemMetadata } from '.';
+import {AnyJson} from "@polkadot/types/types";
 
 export interface IPalletStorageItem extends IPallet {
 	storageItem: string;
 	keys: string[];
-	value: Codec;
+	value: Codec | [AnyJson, Codec][];
 	metadata: ISanitizedStorageItemMetadata | undefined;
 }
