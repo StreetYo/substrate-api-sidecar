@@ -72,7 +72,7 @@ export class PalletsStorageService extends AbstractPalletsService {
 
 			value = Object.fromEntries(
 				entries.map(([key, entry]) => {
-					return [key.toHuman(), entry];
+					return [key.toHuman(), entry.toHuman()];
 				})
 			);
 		} else {
